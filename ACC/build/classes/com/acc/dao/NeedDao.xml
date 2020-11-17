@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.acc.dao.NeedDao">
+ 	<select id="GetOld" resultType="Need">
+ 		SELECT * FROM need ORDER BY need.`need_date` LIMIT 9
+ 	</select>
+ 	<select id="GetNew" resultType="Need">
+ 		SELECT * FROM need ORDER BY need.`need_date` DESC LIMIT 9
+ 	</select>
+ 	<select id="GetNeed" resultType="Need">
+ 		SELECT * FROM need ORDER BY need_name LIMIT 12
+ 	</select>
+ 	<select id="GetNeedAll" resultType="Need">
+ 		SELECT * FROM need
+ 	</select>
+ 	<select id="GetNeedSort" resultType="Need">
+ 		SELECT DISTINCT need_type FROM need
+ 	</select>
+ 	<select id="GetByClass" parameterType="String" resultType="Need">
+ 		SELECT * FROM need where need_type = #{need_type}
+ 	</select>
+ 	<select id="GetByKey" parameterType="String" resultType="Need">
+ 		Select * from need where need_name like '%' #{need_name} '%'
+ 	</select>
+ 	<select id="GetById" parameterType="Integer" resultType="Need">
+ 		Select * from need where need_id = #{need_id}
+ 	</select>
+ 	<select id="GetByUsername" parameterType="String" resultType="Need">
+ 		SELECT * FROM need WHERE user_name = #{user_name}
+ 	</select>
+ 	<insert id="AddNeed" parameterType="Need">
+ 		INSERT INTO need (need_name,need_date,need_price,need_address,need_type,need_content,need_coor,need_image,user_name)
+ 				values(#{need_name},#{need_date},#{need_price},#{need_address},#{need_type},#{need_content},#{need_coor},#{need_image},#{user_name})
+ 	</insert>
+ 	<update id="UpdateNeed" parameterType="Need">
+  		UPDATE need SET need_type = #{need_type},need_name = #{need_name},need_content = #{need_content},
+  			need_price =#{need_price},need_coor=#{need_coor},need_image=#{need_image},need_address=#{need_address}
+  			 where need_id=#{need_id}
+  	</update>
+ 	<delete id="DelNeed" parameterType="Integer">
+ 		delete from need where need_id = #{need_id}
+ 	</delete>
+ </mapper>

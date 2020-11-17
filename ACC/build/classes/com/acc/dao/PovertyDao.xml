@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.acc.dao.PovertyDao">
+ <resultMap type="Contract" id="ContractMap">
+ 		<id property="cid" column="cid" />
+ 		<result property="fuser_name" column="fuser_name" />
+ 		<result property="buser_name" column="buser_name" />
+ 		<result property="cdate" column="cdate" />
+ 		<result property="ctime" column="ctime" />
+ 		<result property="cstate" column="cstate" />
+ 		<association property="supply" javaType="com.acc.pojo.Supply">
+ 				<id property="supply_id" column="supply_id"/>
+ 			<result property="supply_name" column="supply_name"/>
+ 		</association>	
+ 	</resultMap>
+ 	<select id="GetAllFC" parameterType="String" resultType="Contract">
+ 		select * from contract where fuser_name = #{user_name}
+ 	</select>
+ 	<select id="GetAllBC" parameterType="String" resultType="Contract">
+ 		select * from contract where buser_name = #{user_name}
+ 	</select>
+ 	<select id="GetByCid" parameterType="Integer" resultMap="ContractMap">
+ 		select * from contract,supply where contract.supply_id = supply.supply_id and cid = #{cid}
+ 	</select>
+ 	<select id="GetPolicy" resultType="Policy" >
+ 		select pid,title from policy
+ 	</select>
+ 	<select id="GetByPid" parameterType="Integer" resultType="Policy">
+ 		select * from policy where pid = #{pid}
+ 	</select>
+ 	<insert id="AddContract" parameterType="Contract">
+ 		INSERT INTO contract(fuser_name,buser_name,cdate,ctime,supply_id)
+	VALUES(#{fuser_name},#{buser_name},#{cdate},#{ctime},#{supply.supply_id})
+ 	</insert>
+ 	<!-- 续签合同 -->
+ 	<update id="UpDate" parameterType="Contract">
+ 		update contract set cdate = #{cdate},cstate = 0 where cid = #{cid}
+ 	</update>
+ 	<update id="UpTime" parameterType="Contract">
+ 		update contract set ctime = #{ctime} where cid = #{cid}
+ 	</update>
+ 	<update id="UdtState" parameterType="Integer">
+ 		update contract set cstate = #{cstate} where cid = #{cid}
+ 	</update>
+ </mapper>

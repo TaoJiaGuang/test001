@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.acc.dao.UserDao">
+ 	<select id="findByUsername" parameterType="String" resultType="User">
+ 		select * from user where user_name=#{username}
+ 	</select>
+ 	<insert id="AddUser" parameterType="User">
+ 		INSERT INTO USER (user_name,PASSWORD,user_type,sex,birthday,telphone,email,headimage,address)
+ 		 VALUES(#{user_name},#{password},#{user_type},#{sex},#{birthday},#{telphone},#{email},#{headimage},#{address})
+ 	</insert>
+ 	<select id="GetUser" parameterType="User" resultType="User">
+ 		select * from user where user_name=#{user_name} and password=#{password}
+ 	</select>
+ 	<!-- 修改个人资料 -->
+ 	<update id="Update" parameterType="User">
+ 		update user set user_type = #{user_type},sex=#{sex},birthday=#{birthday},telphone=#{telphone},email=#{email},headimage=#{headimage},address=#{address}
+ 		 where user_name = #{user_name}
+ 	</update>
+ 	<!-- 查找聊天记录 -->
+ 	<select id="GetMsg" parameterType="Message" resultType="Message">
+ 		select * from message where fuser_name = #{fuser_name} and buser_name = #{buser_name}
+ 	</select>
+ 	<!-- 添加聊天记录 -->
+ 	<insert id="AddMessage" parameterType="Message">
+ 		INSERT INTO message(msgserial,fuser_name,buser_name,whosend,message,msgdate,fhead_image,bhead_image)
+			VALUES(#{msgserial},#{fuser_name},#{buser_name},#{whosend},#{message},#{msgdate},#{fhead_image},#{bhead_image})
+ 	</insert>
+ 	<!-- 获取头像 -->
+ 	<select id="GetUserHead" parameterType="String" resultType="String"> 
+ 		select headimage from user where user_name = #{user_name}
+ 	</select>
+ 	
+ 	<select id="FGetMsgs" parameterType="String" resultType="Message">
+ 		SELECT * FROM message WHERE fuser_name = #{fuser_name} GROUP BY buser_name
+ 	</select>
+ 	<select id="BGetMsgs" parameterType="String" resultType="Message">
+ 		SELECT * FROM message  WHERE buser_name = #{buser_name} GROUP BY fuser_name
+ 	</select>
+ 	<delete id="DelUser" parameterType="Integer">
+ 		delete from user where user_id =#{user_id}
+ 	</delete>
+ 	<select id="findByUid" parameterType="Integer" resultType="User">
+ 		select * from user where user_id=#{user_id}
+ 	</select>
+ 	<!-- 扣除金额 -->
+ 	<update id="SubCharge" parameterType="User">
+ 		update user set charge = charge - #{charge} where user_name = #{user_name} and password = #{password}
+ 	</update>
+ 	<!-- 农户入账 -->
+ 	<update id="AddCharge" parameterType="User">
+ 		update user set charge = charge + #{charge} where user_name = #{user_name}
+ 	</update>
+ </mapper>

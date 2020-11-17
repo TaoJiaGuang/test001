@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+        <!-- 配置控制器 -->
+        <context:component-scan base-package="com.acc.controller" />
+        <!-- 加载注解驱动 -->
+        <mvc:annotation-driven />
+ 	   <!-- 静态资源访问映射 -->
+        <mvc:resources location="/source/js/" mapping="/source/js/**"></mvc:resources>
+        <mvc:resources location="/source/css/" mapping="/source/css/**"></mvc:resources>
+  		<mvc:resources location="/source/images/" mapping="/source/images/**"></mvc:resources>
+  		<mvc:resources location="/source/images/head/" mapping="/source/images/head/**"></mvc:resources>
+  		<mvc:resources location="/source/images/need/" mapping="/source/images/need/**"></mvc:resources>
+  		<mvc:resources location="/source/images/supply/" mapping="/source/images/supply/**"></mvc:resources>
+  		<mvc:resources location="/source/font/" mapping="/source/font/**"></mvc:resources>
+  		<mvc:resources location="/source/lay/" mapping="/source/lay/**"></mvc:resources>
+  		<mvc:resources location="/source/layui/" mapping="/source/layui/**"></mvc:resources>
+  		<mvc:resources location="/source/layui/css/" mapping="/source/layui/css/**"></mvc:resources>
+  		<!-- 视图解析器 -->
+  		<bean id="ViewResolver" 
+  			class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  			<property name="prefix" value="/JSP/" />		
+  			<property name="suffix" value=".jsp" />
+  		</bean>
+		<!-- 登录拦截器 -->
+  <!-- <mvc:interceptors>
+  	<mvc:interceptor>
+  		<mvc:mapping path="/**" />
+  		<bean class="com.itheima.interceptor.LoginInterCeptor" />
+  	</mvc:interceptor>  	
+  </mvc:interceptors> -->
+  	<!-- 文件上传解析器 -->
+  	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+  		<property name="defaultEncoding" value="UTF-8" />
+  		<property name="maxUploadSize" value="1048576" /> 
+  	</bean>
+</beans>
+

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.acc.dao.SupplyDao">
+ <resultMap type="Order" id="OrderMap">
+ 		<id property="order_id" column="order_id" />
+ 		<result property="order_date" column="order_date" />
+ 		<result property="order_price" column="order_price" />
+ 		<result property="order_count" column="order_count" />
+ 		<result property="order_total" column="order_total" />
+ 		<result property="order_state" column="order_state" />
+ 		<result property="order_telphone" column="order_telphone" />
+ 		<result property="order_address" column="order_address" />
+ 		<result property="fuser_name" column="fuser_name" />
+ 		<result property="buser_name" column="buser_name" />
+ 		<association property="supply" javaType="com.acc.pojo.Supply">
+ 				<id property="supply_id" column="supply_id"/>
+ 			<result property="supply_name" column="supply_name"/>
+ 			<result property="supply_price" column="supply_price"/>
+ 			<result property="supply_address" column="supply_address"/>
+ 			<result property="supply_image" column="supply_image"/>
+ 			<result property="user_name" column="user_name"/> 
+ 		</association>	
+ 	</resultMap>
+ 	<select id="GetHot" resultType="Supply">
+ 		SELECT supply_id,supply_name,supply_sales FROM supply ORDER BY supply_sales DESC LIMIT 9
+ 	</select>
+ 	<select id="GetNew" resultType="Supply">
+ 		SELECT supply_id,supply_name,supply_date FROM supply ORDER BY supply_date DESC LIMIT 9
+ 	</select>
+ 	<select id="GetSupply" resultType="Supply">
+ 		SELECT * FROM supply ORDER BY supply_name LIMIT 12
+ 	</select>
+ 	<select id="GetSort" resultType="Sort">
+ 		SELECT * FROM sort
+  	</select>
+  	<select id="GetAll" resultType="Supply">
+  		SELECT * FROM supply
+  	</select>
+  	<!-- 查询农产品表中存在的类 -->
+  	<select id="GetClass" resultType="Supply">
+  		SELECT DISTINCT supply_type FROM supply
+  	</select>  	
+  	<select id="GetByClass" parameterType="String" resultType="Supply">
+  		SELECT * FROM supply WHERE supply_type=#{supply_type}
+  	</select>
+  	<!-- 按名称关键字查找模糊农产品 -->
+  	<select id="GetByKey" parameterType="String" resultType="Supply">
+  		SELECT * FROM supply WHERE supply_name like '%' #{supply_name} '%'
+  	</select>
+  	<!-- 查询农产品详情 -->
+  	<select id="GetById" parameterType="Integer" resultType="Supply">
+  		SELECT * FROM supply WHERE supply_id=#{supply_id}
+  	</select>
+  	<!-- 按人员查找农产品 -->
+  	<select id="GetByUsernaem" parameterType="String" resultType="Supply">
+  		SELECT * FROM supply WHERE user_name=#{supply_name} ORDER BY supply_date DESC 
+  	</select>
+  	<!-- 添加农产品 -->
+  	<insert id="AddSupply" parameterType="Supply">
+  		insert into supply
+  		 (supply_name,supply_text,supply_date,supply_price,supply_surplus,supply_image,supply_address,supply_telphone,supply_type,user_name,supply_cooperation)
+  		 values(#{supply_name},#{supply_text},#{supply_date},#{supply_price},#{supply_surplus},#{supply_image},#{supply_address},#{supply_telphone},#{supply_type},#{user_name},#{supply_cooperation})
+  	</insert>
+  	<!-- 删除农产品 -->
+  	<delete id="DeleteSupply" parameterType="Integer">
+  		delete from supply where supply_id = #{supply_id}
+  	</delete>
+  	<!-- 修改农产品信息 -->
+  	<update id="UpdateSupply" parameterType="Supply">
+  		UPDATE supply SET supply_type = #{supply_type},supply_name = #{supply_name},supply_text = #{supply_text},
+  			supply_price =#{supply_price},supply_surplus = #{supply_surplus},supply_cooperation=#{supply_cooperation},supply_image=#{supply_image}
+  			 where supply_id=#{supply_id}
+  	</update>
+  	
+ </mapper>

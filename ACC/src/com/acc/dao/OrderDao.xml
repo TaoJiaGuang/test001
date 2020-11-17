@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.acc.dao.OrderDao">
+ <resultMap type="Order" id="OrderMap">
+ 		<id property="order_id" column="order_id" />
+ 		<result property="order_date" column="order_date" />
+ 		<result property="order_price" column="order_price" />
+ 		<result property="order_count" column="order_count" />
+ 		<result property="order_total" column="order_total" />
+ 		<result property="order_state" column="order_state" />
+ 		<result property="order_telphone" column="order_telphone" />
+ 		<result property="order_address" column="order_address" />
+ 		<result property="fuser_name" column="fuser_name" />
+ 		<result property="buser_name" column="buser_name" />
+ 		<association property="supply" javaType="com.acc.pojo.Supply">
+ 				<id property="supply_id" column="supply_id"/>
+ 			<result property="supply_name" column="supply_name"/>
+ 			<result property="supply_price" column="supply_price"/>
+ 			<result property="supply_address" column="supply_address"/>
+ 			<result property="supply_image" column="supply_image"/>
+ 			<result property="user_name" column="user_name"/> 
+ 		</association>	
+ 	</resultMap>
+ 	<resultMap type="Cart" id="CartMap">
+ 		<id property="cart_id" column="cart_id" />
+ 		<result property="cart_count" column="cart_count" /> 
+ 		<result property="user_name" column="user_name" /> 		
+ 		<association property="supply" javaType="com.acc.pojo.Supply">
+ 				<id property="supply_id" column="supply_id"/>
+ 			<result property="supply_name" column="supply_name"/> 
+ 			<result property="supply_price" column="supply_price"/>
+ 			<result property="supply_address" column="supply_address"/>
+ 			<result property="supply_image" column="supply_image"/>
+ 			<result property="user_name" column="user_name"/> 
+ 		</association>		
+ 	</resultMap>
+ 	<!-- 商户、客户查询  -->
+ 	<select id="GetAll" parameterType="String" resultMap="OrderMap">
+ 		SELECT * FROM  orders,supply
+ 			 WHERE orders.supply_id = supply.supply_id  AND orders.`buser_name` = #{buser_name} and order_bdel = false
+ 	</select>
+ 	<!-- 农户查询 -->
+ 	<select id="FindAll" parameterType="String" resultMap="OrderMap">
+ 		SELECT * FROM  orders,supply
+ 			 WHERE orders.`supply_id` = supply.supply_id  AND orders.`fuser_name` = #{fuser_name} and order_fdel = false
+ 	</select>
+ 	<!-- 发货 -->
+ 	<update id="FUpdateState" parameterType="Integer" >
+ 		update orders set order_state = 0 where order_id = #{order_id}
+ 	</update>
+ 	<!-- 收货 -->
+ 	<update id="BUpdateState" parameterType="Integer">
+ 		update orders set order_state = 1 where order_id = #{order_id}
+ 	</update>
+ 	<!-- 农户删除 -->
+ 	<update id="FDeleteOrder" parameterType="Integer">
+ 		update orders set order_fdel = true where order_id = #{order_id}
+ 	</update>
+ 	<!-- 客商删除 -->
+ 	<update id="BDeleteOrder" parameterType="Integer">
+ 		update orders set order_bdel = true where order_id = #{order_id}
+ 	</update>
+ 	<select id="FindbyId" resultType="Order">
+ 		select * from orders where order_id = #{order_id}
+ 	</select>
+ 	<!-- 增加订单 -->
+ 	<insert id="AddOrder" parameterType="Order">
+ 		insert into orders (order_date,order_total,supply_id,buser_name,fuser_name,order_count,order_address,order_telphone)
+ 			values(#{order_date},#{order_total},#{supply.supply_id},#{buser_name},#{fuser_name},#{order_count},#{order_address},#{order_telphone})
+ 	</insert>
+ 	<!-- 减少库存并增加销量 -->
+  	<update id="SubSurplus" parameterType="Order">
+  		UPDATE supply SET supply_surplus = supply_surplus - #{order_count},supply_sales=supply_sales + #{order_count} where supply_id = #{supply.supply_id}
+  	</update>  	
+ 	<!-- 按用户查找所有购物车 -->
+ 	<select id="GetCart" parameterType="String" resultMap="CartMap">
+ 		SELECT * FROM cart,supply WHERE supply.supply_id = cart.supply_id AND  cart.`user_name` =  #{user_name}
+ 	</select> 
+ 	<!-- 购物车减少数量 -->	
+ 	<update id="SubCount" parameterType="Integer">
+ 		update cart set cart_count = cart_count - 1 where cart_id = #{cart_id}
+ 	</update>
+ 	<!-- 购物车增加数量 -->
+ 	<update id="AddCount" parameterType="Integer">
+ 		update cart set cart_count = cart_count + 1 where cart_id = #{cart_id}
+ 	</update>
+ 	<!-- 从购物车中删除 -->
+ 	<delete id="DelCart" parameterType="Integer">
+ 		delete from cart where cart_id = #{cart_id}
+ 	</delete>
+ 	<!-- 查询购物车某一内容是否存在 -->
+ 	<select id="FindByCid" parameterType="Integer" resultType="Cart">
+ 		select * from cart where cart_id = #{cart_id}
+ 	</select>
+ 	<!-- 新加入购物车 -->
+ 	<insert id="AddCart" parameterType="Cart">
+ 		insert into cart(cart_count,user_name,supply_id)
+ 			values(#{cart_count},#{user_name},#{supply.supply_id})
+ 	</insert>
+ </mapper>
